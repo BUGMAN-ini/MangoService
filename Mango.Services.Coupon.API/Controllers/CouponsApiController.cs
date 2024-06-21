@@ -101,14 +101,55 @@ namespace Mango.Services.Coupon.API.Controllers
         }
 
         [HttpDelete]
-        public ResponseDTO Delete([FromBody] PostCouponDTO coupon)
+        [Route("{id:int}")]
+        public ResponseDTO DeleteById(int id)
+        {
+            try
+            {
+                 Coupons obj = _db.Coupons.First(x => x.CouponId == id);
+                _db.Coupons.Remove(obj);
+                _db.SaveChanges();
+                if (obj == null) _response.Result = _mapper.Map<CouponDTO>(null);
+                _response.Result = _mapper.Map<CouponDTO>(obj);
+            }
+            catch (Exception e)
+            {
+                _response.IsSuccess = false;
+                _response.Message = e.Message;
+
+            }
+            return _response;
+        }
+
+        [HttpDelete]
+        [Route("GetByCode/{code}")]
+        public ResponseDTO DeleteByCode(string code)
+        {
+            try
+            {
+                Coupons obj = _db.Coupons.First(x => x.CouponCode == code);
+                _db.Coupons.Remove(obj);
+                _db.SaveChanges();
+                if (obj == null) _response.Result = _mapper.Map<CouponDTO>(null);
+                _response.Result = _mapper.Map<CouponDTO>(obj);
+            }
+            catch (Exception e)
+            {
+                _response.IsSuccess = false;
+                _response.Message = e.Message;
+
+            }
+            return _response;
+        }
+
+        [HttpPut]
+        public ResponseDTO Update([FromBody] CouponDTO coupon)
         {
             try
             {
                 var obj = _mapper.Map<Coupons>(coupon);
-                _db.Coupons.Add(obj);
+                _db.Coupons.Update(obj);
                 _db.SaveChanges();
-                if (obj == null) _response.IsSuccess = false;
 
                 _response.Result = _mapper.Map<CouponDTO>(obj);
             }
@@ -120,5 +161,6 @@ namespace Mango.Services.Coupon.API.Controllers
             }
             return _response;
         }
+
     }
 }
