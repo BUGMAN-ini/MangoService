@@ -4,6 +4,7 @@ using Mango.Services.Coupon.API.Models.DTO;
 using Mango.Services.Coupon.API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mango.Services.Coupon.API.Controllers
 {
@@ -15,7 +16,7 @@ namespace Mango.Services.Coupon.API.Controllers
         private ResponseDTO _response;
         private IMapper _mapper;
 
-        public CouponsApiController(AppDbContext db,IMapper mapper)
+        public CouponsApiController(AppDbContext db, IMapper mapper)
         {
             _db = db;
             _response = new ResponseDTO();
@@ -106,7 +107,7 @@ namespace Mango.Services.Coupon.API.Controllers
         {
             try
             {
-                 Coupons obj = _db.Coupons.First(x => x.CouponId == id);
+                Coupons obj = _db.Coupons.First(x => x.CouponId == id);
                 _db.Coupons.Remove(obj);
                 _db.SaveChanges();
                 if (obj == null) _response.Result = _mapper.Map<CouponDTO>(null);
@@ -147,11 +148,34 @@ namespace Mango.Services.Coupon.API.Controllers
         {
             try
             {
+
                 var obj = _mapper.Map<Coupons>(coupon);
                 _db.Coupons.Update(obj);
                 _db.SaveChanges();
 
                 _response.Result = _mapper.Map<CouponDTO>(obj);
+            }
+            catch (Exception e)
+            {
+                _response.IsSuccess = false;
+                _response.Message = e.Message;
+
+            }
+            return _response;
+        }
+
+        [HttpPut]
+        [Route("{id:int}")]
+        public ResponseDTO UpdateById([FromRoute] int id,[FromBody] CouponDTO coupon)
+        {
+            try
+            {
+                var obj = _db.Coupons.FirstOrDefaultAsync(c => c.CouponId == id);
+                var dto = _mapper.Map<Coupons>(obj);
+                _db.Coupons.Update(dto);
+                _db.SaveChanges();
+
+                _response.Result = _mapper.Map<CouponDTO>(dto);
             }
             catch (Exception e)
             {

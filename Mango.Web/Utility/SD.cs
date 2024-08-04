@@ -1,6 +1,6 @@
 ﻿namespace Mango.Web.Utility
 {
-    public class SD
+    public class SD  //static details
     {
         public enum ApiType
         {
