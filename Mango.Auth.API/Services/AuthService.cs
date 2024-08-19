@@ -70,7 +70,7 @@ namespace Mango.Auth.API.Services
 					UserDto userDto = new()
 					{
 						Email = userToReturn.Email,
-						ID = userToReturn.Id,
+						Id = userToReturn.Id,
 						Name = userToReturn.Name,
 						PhoneNum = userToReturn.PhoneNumber
 					};
