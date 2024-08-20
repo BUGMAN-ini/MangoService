@@ -3,6 +3,7 @@ using Mango.Auth.API.Models.DTO;
 using Mango.Auth.API.Services.IServices;
 using Mango.Services.Auth.API.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
 
 namespace Mango.Auth.API.Services
 {
@@ -18,6 +19,23 @@ namespace Mango.Auth.API.Services
 			_userManager = userManager;
 			_db = db;
 			_JwtToken = jwtToken;
+		}
+
+		public async Task<bool> AssignRole(string email, string rolename)
+		{
+			var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == email.ToLower());
+			if (user != null)
+			{
+				if(!_rolemanager.RoleExistsAsync(rolename).GetAwaiter().GetResult())
+				{
+					//Craate role if not exists
+
+					_rolemanager.CreateAsync(new IdentityRole(rolename)).GetAwaiter().GetResult();
+				}
+				await _userManager.AddToRoleAsync(user, rolename);
+				return true;
+			}
+			return false;
 		}
 
 		public async Task<LoginResponseDto> Login(LoginRequestDto loginRequest)

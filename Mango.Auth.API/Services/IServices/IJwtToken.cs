@@ -7,3 +7,4 @@ namespace Mango.Auth.API.Services.IServices
 		string GenerateToken(ApplicationUser applicationuser);
 	}
 }
+
