@@ -25,7 +25,7 @@ namespace Mango.Auth.API.Services
 			}
 
 			var tokenHandler = new JwtSecurityTokenHandler();
-			var key = Encoding.ASCII.GetBytes(_jwtOptions.Secret);
+			//var key = Encoding.ASCII.GetBytes(_jwtOptions.Secret);
 
 			var claims = new List<Claim>
 			{
@@ -40,7 +40,7 @@ namespace Mango.Auth.API.Services
 				Issuer = _jwtOptions.Issuer,
 				Subject = new ClaimsIdentity(claims),
 				Expires = DateTime.UtcNow.AddDays(7),
-				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret)), SecurityAlgorithms.HmacSha256Signature)
 			};
 
 			var token = tokenHandler.CreateToken(tokenDescriptor);
