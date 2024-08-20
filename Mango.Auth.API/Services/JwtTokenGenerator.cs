@@ -11,35 +11,40 @@ namespace Mango.Auth.API.Services
 	public class JwtTokenGenerator : IJwtToken
 	{
 		private readonly JwtOptions _jwtOptions;
+
 		public JwtTokenGenerator(IOptions<JwtOptions> jwtOptions)
 		{
-			_jwtOptions = jwtOptions.Value;
+			_jwtOptions = jwtOptions?.Value ?? throw new ArgumentNullException(nameof(jwtOptions));
 		}
-		public string GenerateToken(ApplicationUser applicationuser)
+
+		public string GenerateToken(ApplicationUser applicationUser)
 		{
-			var tokenhandler = new JwtSecurityTokenHandler();
+			if (applicationUser == null)
+			{
+				throw new ArgumentNullException(nameof(applicationUser));
+			}
+
+			var tokenHandler = new JwtSecurityTokenHandler();
 			var key = Encoding.ASCII.GetBytes(_jwtOptions.Secret);
 
-			var claimlist = new List<Claim>
+			var claims = new List<Claim>
 			{
-				new Claim(JwtRegisteredClaimNames.Email,applicationuser.Email),
-				new Claim(JwtRegisteredClaimNames.Sub,applicationuser.Id),
-				new Claim(JwtRegisteredClaimNames.Name,applicationuser.UserName)
+			new Claim(JwtRegisteredClaimNames.Email, applicationUser.Email),
+			new Claim(JwtRegisteredClaimNames.Sub, applicationUser.Id),
+			new Claim(JwtRegisteredClaimNames.Name, applicationUser.UserName)
 			};
 
-			var tokendescripter = new SecurityTokenDescriptor
+			var tokenDescriptor = new SecurityTokenDescriptor
 			{
 				Audience = _jwtOptions.Audience,
 				Issuer = _jwtOptions.Issuer,
-				Subject = new ClaimsIdentity(claimlist),
+				Subject = new ClaimsIdentity(claims),
 				Expires = DateTime.UtcNow.AddDays(7),
 				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-
 			};
 
-			var token = tokenhandler.CreateToken(tokendescripter);
-
-			return tokenhandler.WriteToken(token);
+			var token = tokenHandler.CreateToken(tokenDescriptor);
+			return tokenHandler.WriteToken(token);
 		}
 	}
 }

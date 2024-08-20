@@ -25,7 +25,7 @@ namespace Mango.Auth.API.Services
 			var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequest.UserName.ToLower());
 
 			bool isvalid = await _userManager.CheckPasswordAsync(user, loginRequest.Password);
-			if (isvalid = false || user == null)
+			if (isvalid == false || user is null)
 			{
 				return new LoginResponseDto() { User = null, Token = "" };
 			}
@@ -36,7 +36,7 @@ namespace Mango.Auth.API.Services
 			UserDto userDto = new()
 			{
 				Email = user.Email,
-				ID = user.Id,
+				Id = user.Id,
 				Name = user.Name,
 				PhoneNum = user.PhoneNumber
 			};
