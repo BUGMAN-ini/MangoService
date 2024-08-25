@@ -2,9 +2,13 @@
 using Mango.Web.Models;
 using Mango.Web.Service.IService;
 using Mango.Web.Utility;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Mango.Web.Controllers
 {
@@ -12,13 +16,15 @@ namespace Mango.Web.Controllers
 	{
 
 		private readonly IAuthService _authService;
+		private readonly ITokerProvider _provider;
 
-		public AuthController(IAuthService authService)
-		{
-			_authService = authService;
-		}
+        public AuthController(IAuthService authService, ITokerProvider provider)
+        {
+            _authService = authService;
+            _provider = provider;
+        }
 
-		[HttpGet]
+        [HttpGet]
 		public async Task<IActionResult> Login()
 		{
 
@@ -36,7 +42,8 @@ namespace Mango.Web.Controllers
             {
 				LoginResponseDto loginresponse = 
 					JsonConvert.DeserializeObject<LoginResponseDto>(Convert.ToString(response.Result));
-         
+
+				_provider.SetToken(loginresponse.Token);
 				return RedirectToAction("Index", "Home");
             }
 			else
@@ -99,6 +106,21 @@ namespace Mango.Web.Controllers
         {
             return View();
         }
+
+		private async Task SignInUser(LoginResponseDto login)
+		{
+			var handler = new JwtSecurityTokenHandler();
+
+			var jwt = handler.ReadJwtToken(login.Token);
+
+			var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+			identity.AddClaim();
+
+
+
+			var principal = new ClaimsPrincipal();
+			await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,)
+		}
 
     }
 }
