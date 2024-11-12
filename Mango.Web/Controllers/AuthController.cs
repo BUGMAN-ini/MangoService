@@ -114,12 +114,12 @@ namespace Mango.Web.Controllers
 			var jwt = handler.ReadJwtToken(login.Token);
 
 			var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-			identity.AddClaim();
+			//identity.AddClaim();
 
 
 
-			var principal = new ClaimsPrincipal();
-			await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,)
+			//var principal = new ClaimsPrincipal();
+			//await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme)
 		}
 
     }

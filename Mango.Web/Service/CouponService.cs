@@ -69,6 +69,7 @@ namespace Mango.Web.Service
               });
         }
 
+
         public async Task<ResponseDTO?> UpdateCouponAsync(CouponDto couponDto)
         {
             return await _baseservice.SendAsync(
@@ -77,7 +78,6 @@ namespace Mango.Web.Service
                   ApiType = SD.ApiType.PUT,
                   Data = couponDto,
                   Url = SD.CouponAPIBase + "/api/coupon"
-
               });
         }
     }

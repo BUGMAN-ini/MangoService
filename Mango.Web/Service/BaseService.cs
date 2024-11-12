@@ -65,7 +65,6 @@ namespace Mango.Web.Service
                         var apicontent = await response.Content.ReadAsStringAsync();
                         var apiresponsedto = JsonConvert.DeserializeObject<ResponseDTO>(apicontent);
                         return apiresponsedto;
-
                 }
             }
             catch (Exception ex)
@@ -73,7 +72,7 @@ namespace Mango.Web.Service
                 var dto = new ResponseDTO
                 {
                     Message = ex.Message,
-                    IsSuccess = false,
+                    IsSuccess = false
                 };
                 return dto;
             }

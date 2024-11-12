@@ -5,6 +5,8 @@ using Mango.Services.Coupon.API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace Mango.Services.Coupon.API.Controllers
 {
@@ -78,7 +80,6 @@ namespace Mango.Services.Coupon.API.Controllers
             }
             return _response;
         }
-
 
         [HttpPost]
         public ResponseDTO Post([FromBody] PostCouponDTO coupon)
@@ -166,7 +167,7 @@ namespace Mango.Services.Coupon.API.Controllers
 
         [HttpPut]
         [Route("{id:int}")]
-        public ResponseDTO UpdateById([FromRoute] int id,[FromBody] CouponDTO coupon)
+        public ResponseDTO UpdateById([FromRoute] int id, [FromBody] CouponDTO coupon)
         {
             try
             {
@@ -184,6 +185,34 @@ namespace Mango.Services.Coupon.API.Controllers
 
             }
             return _response;
+        }
+
+        // To Test My Node JS API
+        [HttpGet]
+        [Route("random")]
+        public async Task<IActionResult> GetJoke()
+        {
+            string apiUrl = "http://localhost:3000/joke";
+            try
+            {
+                HttpClient httpClient = new HttpClient();
+                var response = await httpClient.GetAsync(apiUrl);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return StatusCode((int)response.StatusCode, "Failed to fetch the joke.");
+                }
+
+               
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var joke = JsonSerializer.Deserialize<object>(jsonResponse);
+
+                return Ok(joke);
+            }
+            catch (HttpRequestException ex)
+            {
+                return StatusCode(500, $"Error calling the external API: {ex.Message}");
+            }
         }
 
     }
