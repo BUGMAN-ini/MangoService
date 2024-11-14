@@ -47,7 +47,7 @@ namespace Mango.Auth.API.Controllers
 			return Ok(_response);
 		}
 
-		[HttpPost("AsignRole")]
+		[HttpPost("AssignRole")]
 		public async Task<IActionResult> AsignRole([FromBody] RegistrationRequestDto model)
 		{
 			var loginresponse = await _authservice.AssignRole(model.Email,model.Role.ToUpper());

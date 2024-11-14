@@ -23,7 +23,7 @@ namespace Mango.Web.Service
 		      {
 			       ApiType = SD.ApiType.POST,
 			       Data = roleRequest,
-			       Url = SD.AuthApiBase + "/api/auth/AsignRole"
+			       Url = SD.AuthApiBase + "/api/auth/AssignRole"
 			  });
 		}
 
