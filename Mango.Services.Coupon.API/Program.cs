@@ -4,8 +4,10 @@ using Mango.Services.Coupon.API.Mapper;
 using Mango.Services.Coupon.API.Models.DTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +20,31 @@ IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+var settingsSection = builder.Configuration.GetSection("ApiSettings");
 
+var secret = settingsSection.GetValue<string>("Secret");
+var issuer = settingsSection.GetValue<string>("Issuer");
+var audience = settingsSection.GetValue<string>("Audience");
+
+var key = Encoding.ASCII.GetBytes(secret);
+
+builder.Services.AddAuthentication(x =>
+{
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x =>
+{
+    x.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = true,
+        ValidIssuer = issuer,
+        ValidateAudience = true,
+        ValidAudience = audience
+    };
+});
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 
@@ -60,8 +86,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 app.MapControllers();
 ApplyMigration();
