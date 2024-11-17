@@ -1,12 +1,17 @@
-using Mango.Services.Product.API.Data;
+using AutoMapper;
+using Mango.Services.Products.API.Data;
 using Mango.Services.Products.API.Extension;
 using Microsoft.EntityFrameworkCore;
+using Mango.Services.Products.API.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ProductsConnectionString"));
 });
+IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+builder.Services.AddSingleton(mapper);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Add services to the container.
 
 builder.Services.AddControllers();

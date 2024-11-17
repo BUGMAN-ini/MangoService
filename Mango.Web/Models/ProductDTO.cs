@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Mango.Services.Products.API.Models.Dto
+﻿namespace Mango.Web.Models
 {
-    public class ProductDto
+    public class ProductDTO
     {
-        public int ProductId { get; set; }
         public string Name { get; set; }
         public double Price { get; set; }
         public string Description { get; set; }

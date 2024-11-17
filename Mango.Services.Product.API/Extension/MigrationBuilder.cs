@@ -1,4 +1,4 @@
-﻿using Mango.Services.Product.API.Data;
+﻿using Mango.Services.Products.API.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mango.Services.Products.API.Extension
