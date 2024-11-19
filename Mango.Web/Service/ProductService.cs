@@ -18,8 +18,8 @@ namespace Mango.Web.Service
             return await _baseservice.SendAsync(
                 new RequestDTO()
                 {
-                    ApiType = SD.ApiType.GET,
-                    Url = SD.ProductAPIBase + "/api/Products"
+                    ApiType = SD.ApiType.POST,
+                    Url = SD.ProductAPIBase + "/api/Products/Add"
                 });
         }
 
@@ -28,8 +28,8 @@ namespace Mango.Web.Service
             return await _baseservice.SendAsync(
                 new RequestDTO()
                 {
-                    ApiType = SD.ApiType.GET,
-                    Url = SD.ProductAPIBase + "/api/Products"
+                    ApiType = SD.ApiType.DELETE,
+                    Url = SD.ProductAPIBase + "/api/Products" + id
                 });
         }
 
@@ -39,37 +39,37 @@ namespace Mango.Web.Service
                 new RequestDTO()
                 {
                     ApiType = SD.ApiType.GET,
-                    Url = SD.ProductAPIBase + "/api/Products"
+                    Url = SD.ProductAPIBase + "/api/Products/All"
                 });
         }
 
-        public async Task<ResponseDTO?> GetProductAsync(string couponId)
+        public async Task<ResponseDTO?> GetProductAsync(int id)
         {
             return await _baseservice.SendAsync(
                 new RequestDTO()
                 {
                     ApiType = SD.ApiType.GET,
-                    Url = SD.ProductAPIBase + "/api/Products"
+                    Url = SD.ProductAPIBase + "/api/Products" + id
                 });
         }
 
-        public async Task<ResponseDTO?> GetProductByIdAsync(int couponId)
+        public async Task<ResponseDTO?> GetProductByIdAsync(int prodId)
         {
             return await _baseservice.SendAsync(
                  new RequestDTO()
                  {
                      ApiType = SD.ApiType.GET,
-                     Url = SD.ProductAPIBase + "/api/Products"
+                     Url = SD.ProductAPIBase + "/api/Products"+ prodId
                  });
         }
 
-        public async Task<ResponseDTO?> UpdateProductAsync(ProductDTO couponDto)
+        public async Task<ResponseDTO?> UpdateProductAsync(ProductDTO product)
         {
             return await _baseservice.SendAsync(
                 new RequestDTO()
                 {
-                    ApiType = SD.ApiType.GET,
-                    Url = SD.ProductAPIBase + "/api/Products"
+                    ApiType = SD.ApiType.PUT,
+                    Url = SD.ProductAPIBase + "/api/Products" + product
                 });
         }
     }

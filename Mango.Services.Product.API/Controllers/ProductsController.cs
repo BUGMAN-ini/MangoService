@@ -12,6 +12,7 @@ namespace Mango.Services.Products.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductsController : ControllerBase
     {
         private readonly AppDbContext _db;
@@ -25,7 +26,7 @@ namespace Mango.Services.Products.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet("All")]
         public ResponseDTO Get()
         {
             try
@@ -43,8 +44,7 @@ namespace Mango.Services.Products.API.Controllers
             return _responseDTO;
         }
 
-        [HttpGet]
-        [Route("{id:int}")]
+        [HttpGet("{id:int}")]
         public ResponseDTO Get(int id)
         {
             try
@@ -84,7 +84,8 @@ namespace Mango.Services.Products.API.Controllers
             return _responseDTO;
         }
 
-        [HttpPost]
+        [HttpPost("Add")]
+        [Authorize(Roles = "ADMIN")]
         public ResponseDTO Post([FromBody] PostProductDto product)
         {
             try
@@ -107,6 +108,7 @@ namespace Mango.Services.Products.API.Controllers
 
         [HttpDelete]
         [Route("{id:int}")]
+        [Authorize(Roles = "ADMIN")]
         public ResponseDTO DeleteById(int id)
         {
             try
@@ -128,6 +130,7 @@ namespace Mango.Services.Products.API.Controllers
 
         [HttpDelete]
         [Route("GetByName/{Name}")]
+        [Authorize(Roles = "ADMIN")]
         public ResponseDTO DeleteByCode(string Name)
         {
             try
@@ -148,6 +151,7 @@ namespace Mango.Services.Products.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "ADMIN")]
         public ResponseDTO Update([FromBody] ProductDto product)
         {
             try
@@ -170,6 +174,7 @@ namespace Mango.Services.Products.API.Controllers
 
         [HttpPut]
         [Route("{id:int}")]
+        [Authorize(Roles = "ADMIN")]
         public ResponseDTO UpdateById([FromRoute] int id, [FromBody] ProductDto product)
         {
             try
