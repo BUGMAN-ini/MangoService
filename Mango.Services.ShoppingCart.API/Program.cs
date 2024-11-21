@@ -54,7 +54,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
-
+app.ApplyMigration();
 app.MapControllers();
 
 app.Run();
