@@ -11,7 +11,7 @@ using System.Reflection.PortableExecutable;
 
 namespace Mango.Services.ShoppingCart.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Cart")]
     [ApiController]
     public class ShoppingCartAPIController : ControllerBase
     {
@@ -76,7 +76,7 @@ namespace Mango.Services.ShoppingCart.API.Controllers
             return _response;
         }
 
-        [HttpDelete("Remove")]
+        [HttpPost("Remove")]
         public async Task<ResponseDTO?> RemoveCart(int cartDetailsId)
         {
             try

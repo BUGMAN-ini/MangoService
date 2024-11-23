@@ -59,6 +59,7 @@ namespace Mango.Web.Service
                  new RequestDTO()
                  {
                      ApiType = SD.ApiType.GET,
+                     Data = prodId,
                      Url = SD.ProductAPIBase + "/api/Products"+ prodId
                  });
         }
