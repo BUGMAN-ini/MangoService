@@ -7,14 +7,14 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Azure_Service_Bus
+namespace AzureServiceBus
 {
     public class MessageBus : IMessageBus
     {
         private string ServiceConnectionString = "";
         public async Task PublishMessage(object message, string topic_queue_name)
         {
-            
+
             await using var client = new ServiceBusClient(ServiceConnectionString);
 
             ServiceBusSender sender = client.CreateSender(topic_queue_name);

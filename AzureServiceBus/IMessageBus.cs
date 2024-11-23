@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Azure_Service_Bus
+namespace AzureServiceBus
 {
-    internal interface IMessageBus
+    public interface IMessageBus
     {
         Task PublishMessage(object message, string topic_queue_name);
     }
