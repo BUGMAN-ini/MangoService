@@ -12,7 +12,7 @@ namespace Mango.Services.Email.API.Messaging
         private readonly string emailCartQueue;
         private readonly IConfiguration _configuration;
         private ServiceBusProcessor _emailCartProcessor;
-        private readonly IEmailService emailService;
+        private readonly EmailService emailService;
 
         public AzureServiceBusMessaging(IConfiguration configuration, IEmailService emailService)
         {
