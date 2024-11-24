@@ -14,7 +14,7 @@ namespace Mango.Services.Email.API.Messaging
         private ServiceBusProcessor _emailCartProcessor;
         private readonly EmailService emailService;
 
-        public AzureServiceBusMessaging(IConfiguration configuration, IEmailService emailService)
+        public AzureServiceBusMessaging(IConfiguration configuration, EmailService emailService)
         {
             _configuration = configuration;
 
