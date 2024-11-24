@@ -1,0 +1,6 @@
+@Mango.Services.Email.API_HostAddress = http://localhost:5022
+
+GET {{Mango.Services.Email.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
