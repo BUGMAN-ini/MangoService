@@ -10,8 +10,11 @@ namespace Mango.Services.Email.API.Messaging
     {
         private readonly string serviceBusConnectionString;
         private readonly string emailCartQueue;
+        private readonly string RegisterUserQueue;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
         private ServiceBusProcessor _emailCartProcessor;
+        private ServiceBusProcessor _RegisterUserQueue;
         private readonly EmailService emailService;
 
         public AzureServiceBusMessaging(IConfiguration configuration, EmailService emailService)
@@ -32,6 +35,27 @@ namespace Mango.Services.Email.API.Messaging
             _emailCartProcessor.ProcessMessageAsync += OnEmailCartRequestRecieved;
             _emailCartProcessor.ProcessErrorAsync += ErrorHandler;
             await _emailCartProcessor.StartProcessingAsync();
+
+            _RegisterUserQueue.ProcessMessageAsync += OnUserRegisterRequestRecieved;
+            _RegisterUserQueue.ProcessErrorAsync += ErrorHandler;
+            await _RegisterUserQueue.StartProcessingAsync();
+        }
+
+        private async Task OnUserRegisterRequestRecieved(ProcessMessageEventArgs args)
+        {
+            var message = args.Message;
+            var body = Encoding.UTF8.GetString(message.Body);
+
+            string? email = JsonConvert.DeserializeObject<string>(body);
+            try
+            {
+                //await emailService?.EmailCartAndLog(email);
+                await args.CompleteMessageAsync(args.Message);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         private Task ErrorHandler(ProcessErrorEventArgs args)
@@ -61,6 +85,9 @@ namespace Mango.Services.Email.API.Messaging
         {
             await _emailCartProcessor.StopProcessingAsync();
             await _emailCartProcessor.DisposeAsync();
+
+            await _RegisterUserQueue.StopProcessingAsync();
+            await _RegisterUserQueue.DisposeAsync();
         }
     }
 }

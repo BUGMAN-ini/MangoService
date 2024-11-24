@@ -40,5 +40,11 @@ namespace Mango.Services.Email.API.Services
                 return false;
             }
         }
+
+        public async Task RegisterUserEmailAndLog(string email)
+        {
+            string message = "RegistrationSuccesfull";
+            await LogAndEmail(message, email);
+        }
     }
 }
