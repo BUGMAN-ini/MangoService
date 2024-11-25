@@ -10,10 +10,11 @@ namespace Mango.Web.Controllers
     public class CartController : Controller
     {
         private readonly ICartService cartService;
-
-        public CartController(ICartService cartService)
+        private readonly IOrderService orderService;
+        public CartController(ICartService cartService, IOrderService orderService)
         {
             this.cartService = cartService;
+            this.orderService = orderService;
         }
         [Authorize]
         public async Task<IActionResult> CartIndex()
@@ -25,6 +26,29 @@ namespace Mango.Web.Controllers
         public async Task<IActionResult> Checkout()
         {
             return View(await LoadCartBasedOnUser());
+        }
+
+        [HttpPost]
+        [ActionName("Checkout")]
+        public async Task<IActionResult> Checkout(CartDto cartdto)
+        {
+            CartDto cart = await LoadCartBasedOnUser();
+            cart.CartHeader.Phone = cartdto.CartHeader.Phone;
+            cart.CartHeader.Email = cartdto.CartHeader.Email;
+            cart.CartHeader.FirstName = cartdto.CartHeader.FirstName;
+
+            var response = await orderService.CreateOrder(cart);
+            OrderHeaderDto orderHeaderDto = JsonConvert.DeserializeObject<OrderHeaderDto>(Convert.ToString(response.Result));
+            if(response != null && response.IsSuccess)
+            {
+
+            }
+            return View();
+        }
+
+        public async Task<IActionResult> OrderConfirmation(int orderId)
+        {
+            return View(orderId);
         }
 
         [HttpPost]
