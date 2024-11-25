@@ -6,6 +6,7 @@
 		public static string AuthApiBase { get; set; }
         public static string ProductAPIBase { get; set; }
         public static string ShoppingCartAPIBase { get; set; }
+        public static string OrdersAPI { get; set; }
 
         public const string RoleAdmin = "ADMIN";
         public const string RoleCustomer = "CUSTOMER";
