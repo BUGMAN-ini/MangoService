@@ -9,6 +9,8 @@ using Mango.Services.Order.API.Utility;
 using Mango.Services.Order.API.Services.IServices;
 using Mango.Services.Order.API.Services;
 using Mango.Services.Order.API.Extension;
+using Stripe;
+using ProductService = Mango.Services.Order.API.Services.ProductService;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -62,6 +64,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("StripeSecretKey:PaymentKey").Get<string>();
 
 app.UseAuthorization();
 app.ApplyMigration();

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Net.Http;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
+using Stripe;
 
 namespace Mango.Services.Coupon.API.Controllers
 {
@@ -91,7 +92,15 @@ namespace Mango.Services.Coupon.API.Controllers
                 var obj = _mapper.Map<Coupons>(coupon);
                 _db.Coupons.Add(obj);
                 _db.SaveChanges();
-                if (obj == null) _response.IsSuccess = false;
+
+                var options = new CouponCreateOptions
+                {
+                    PercentOff = (long)(coupon.DiscountAmount * 100),
+                    Name = coupon.CouponCode,
+                    Id = coupon.CouponCode,
+                    Duration = "repeating",
+                    DurationInMonths = 3,
+                };
 
                 _response.Result = _mapper.Map<CouponDTO>(obj);
             }
@@ -114,6 +123,7 @@ namespace Mango.Services.Coupon.API.Controllers
                 Coupons obj = _db.Coupons.First(x => x.CouponId == id);
                 _db.Coupons.Remove(obj);
                 _db.SaveChanges();
+
                 if (obj == null) _response.Result = _mapper.Map<CouponDTO>(null);
                 _response.Result = _mapper.Map<CouponDTO>(obj);
             }
@@ -136,6 +146,7 @@ namespace Mango.Services.Coupon.API.Controllers
                 Coupons obj = _db.Coupons.First(x => x.CouponCode == code);
                 _db.Coupons.Remove(obj);
                 _db.SaveChanges();
+
                 if (obj == null) _response.Result = _mapper.Map<CouponDTO>(null);
                 _response.Result = _mapper.Map<CouponDTO>(obj);
             }

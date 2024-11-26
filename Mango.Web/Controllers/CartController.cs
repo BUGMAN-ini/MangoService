@@ -41,7 +41,20 @@ namespace Mango.Web.Controllers
             OrderHeaderDto orderHeaderDto = JsonConvert.DeserializeObject<OrderHeaderDto>(Convert.ToString(response.Result));
             if(response != null && response.IsSuccess)
             {
+                var domain = Request.Scheme + "://" + Request.Host.Value + "/";
 
+                StripeRequestDto striperequest = new()
+                {
+                    ApprovedUrl = domain + "cart/Confirmation?OrderId=" + orderHeaderDto.OrderHeaderId,
+                    CancelUrl = domain + "cart/Checkout",
+                    OrderHeader = orderHeaderDto,
+                };
+
+                var stripeResponse = await orderService.CreateStripeSession(striperequest);
+                StripeRequestDto stripeResponserecieved = JsonConvert.DeserializeObject<StripeRequestDto>(Convert.ToString(response.Result));
+
+                Response.Headers.Add("Location", stripeResponserecieved.StripeSessionUrl);
+                return new StatusCodeResult(303);
             }
             return View();
         }
