@@ -19,6 +19,8 @@ namespace Mango.Web.Service
                 new RequestDTO()
                 {
                     ApiType = SD.ApiType.POST,
+                    Data = couponDto,
+                    ContentType = SD.ContentType.MultiPartFormData,
                     Url = SD.ProductAPIBase + "/api/Products/Add"
                 });
         }

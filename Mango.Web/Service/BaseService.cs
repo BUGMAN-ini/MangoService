@@ -30,6 +30,36 @@ namespace Mango.Web.Service
             
             //Token
             message.RequestUri = new Uri(request.Url);
+
+            if(request.ContentType == ContentType.MultiPartFormData)
+            {
+                var content = new MultipartFormDataContent();
+
+                foreach(var prop in request.Data.GetType().GetProperties())
+                {
+                    var value = prop.GetValue(request.Data);
+                    if (value is FormFile)
+                    {
+                        var file = (FormFile)value;
+                        if(file != null)
+                        {
+                            content.Add(new StreamContent(file.OpenReadStream()), prop.Name, file.FileName);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if(request.Data != null)
+                {
+                    message.Content = new StringContent(JsonConvert.SerializeObject(request.Data), Encoding.UTF8, "application/json");
+                }
+            }
+
+
+
+
+
             if(request.Data != null)
             {
                 message.Content = new StringContent(JsonConvert.SerializeObject(request.Data), Encoding.UTF8, "application/json");

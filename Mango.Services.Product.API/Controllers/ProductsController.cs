@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
-using Azure;
 using Mango.Services.Products.API.Data;
 using Mango.Services.Products.API.Models;
 using Mango.Services.Products.API.Models.Dto;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -84,16 +82,33 @@ namespace Mango.Services.Products.API.Controllers
         }
 
         [HttpPost("Add")]
-        [Authorize(Roles = "ADMIN")]
-        public ResponseDTO Post([FromBody] PostProductDto product)
+        //[Authorize(Roles = "ADMIN")]
+        public ResponseDTO Post([FromBody] Product product)
         {
             try
             {
                 var obj = _mapper.Map<Product>(product);
                 _db.Products.Add(obj);
                 _db.SaveChanges();
-                if (obj == null) _responseDTO.IsSuccess = false;
-
+                if(product.ImageUrl != null)
+                {
+                    string fileName = product.ProductId + Path.GetExtension(product.ImageUrl);
+                    string filePath = @"wwwroot\ProductImages\" + fileName;
+                    var filePathDirectory = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+                    using (var filestrem = new FileStream(filePathDirectory,FileMode.Create))
+                    {
+                        product.Image.CopyTo(filestrem);
+                    }
+                    var baseurl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}{HttpContext.Request.PathBase.Value}";
+                    product.ImageUrl = baseurl + "/ProductImages" + filePath;
+                    product.ImageLocalPath = filePath;
+                }
+                else
+                {
+                    product.ImageUrl = null;
+                }
+                _db.Products.Update(product);
+                _db.SaveChanges();
                 _responseDTO.Result = _mapper.Map<ProductDto>(obj);
             }
             catch (Exception e)
@@ -135,6 +150,15 @@ namespace Mango.Services.Products.API.Controllers
             try
             {
                 Product obj = _db.Products.First(x => x.Name == Name);
+                if(!string.IsNullOrEmpty(obj.ImageLocalPath))
+                {
+                    var oldfilepath = Path.Combine(Directory.GetCurrentDirectory(), obj.ImageLocalPath);
+                    FileInfo file = new FileInfo(oldfilepath);
+                    if (file.Exists)
+                    {
+                        file.Delete();  
+                    }
+                }
                 _db.Products.Remove(obj);
                 _db.SaveChanges();
                 if (obj == null) _responseDTO.Result = _mapper.Map<ProductDto>(null);
@@ -151,13 +175,30 @@ namespace Mango.Services.Products.API.Controllers
 
         [HttpPut]
         [Authorize(Roles = "ADMIN")]
-        public ResponseDTO Update([FromBody] ProductDto product)
+        public ResponseDTO Update([FromBody] Product product)
         {
             try
             {
 
                 var obj = _mapper.Map<Product>(product);
-                _db.Products.Update(obj);
+                if (product.ImageUrl != null)
+                {
+                    string fileName = product.ProductId + Path.GetExtension(product.ImageUrl);
+                    string filePath = @"wwwroot\ProductImages\" + fileName;
+                    var filePathDirectory = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+                    using (var filestrem = new FileStream(filePathDirectory, FileMode.Create))
+                    {
+                        product.Image.CopyTo(filestrem);
+                    }
+                    var baseurl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}{HttpContext.Request.PathBase.Value}";
+                    product.ImageUrl = baseurl + "/ProductImages" + filePath;
+                    product.ImageLocalPath = filePath;
+                }
+                else
+                {
+                    product.ImageUrl = null;
+                }
+                _db.Products.Update(product);
                 _db.SaveChanges();
 
                 _responseDTO.Result = _mapper.Map<ProductDto>(obj);
